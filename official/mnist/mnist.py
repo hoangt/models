@@ -209,14 +209,20 @@ def run_mnist(flags_obj):
       batch_size=flags_obj.batch_size)
 
   # Train and evaluate model.
-  for _ in range(flags_obj.train_epochs // flags_obj.epochs_between_evals):
+  fout = open('train.output', 'w')
+  fout.write('%8s %16s %16s %16s\n' % ('Epoch', 'Accuracy', 'Loss', 'Global_step'));
+  for ep in range(flags_obj.train_epochs // flags_obj.epochs_between_evals):
     mnist_classifier.train(input_fn=train_input_fn, hooks=train_hooks)
     eval_results = mnist_classifier.evaluate(input_fn=eval_input_fn)
-    print('\nEvaluation results:\n\t%s\n' % eval_results)
-
+    print('\nEpoch %d, evaluation results:\n\t%s\n' % (ep, eval_results))
+    fout.write('%8d ' % ep)
+    for val in eval_results.values():
+      fout.write('%16.4f ' % val)
+    fout.write('\n');
     if model_helpers.past_stop_threshold(flags_obj.stop_threshold,
                                          eval_results['accuracy']):
       break
+  fout.close()
 
   # Export the model
   if flags_obj.export_dir is not None:
