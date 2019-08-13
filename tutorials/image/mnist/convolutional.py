@@ -139,6 +139,16 @@ def main(_):
     test_data = extract_data(test_data_filename, 10000)
     test_labels = extract_labels(test_labels_filename, 10000)
 
+    print('train_images shape %s' % (str(numpy.shape(train_data))))
+    print('train_labels shape %s' % (str(numpy.shape(train_labels))))
+    print('test_images  shape %s' % (str(numpy.shape(test_data))))
+    print('test_labels  shape %s' % (str(numpy.shape(test_labels))))
+
+    print('train_images type  %s' % (str(train_data.dtype)))
+    print('train_labels type  %s' % (str(train_labels.dtype)))
+    print('test_images  type  %s' % (str(test_data.dtype)))
+    print('test_labels  type  %s' % (str(test_labels.dtype)))
+
     # Generate a validation set.
     validation_data = train_data[:VALIDATION_SIZE, ...]
     validation_labels = train_labels[:VALIDATION_SIZE]
@@ -230,6 +240,9 @@ def main(_):
   logits = model(train_data_node, True)
   loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
       labels=train_labels_node, logits=logits))
+
+  print('train_labels_node %s' % (str(train_labels_node.get_shape().as_list())) )
+  sys.exit()
 
   # L2 regularization for the fully connected parameters.
   regularizers = (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
